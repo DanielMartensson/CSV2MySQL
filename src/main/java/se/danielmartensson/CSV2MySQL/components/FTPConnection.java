@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 
 @Component
@@ -30,31 +32,41 @@ public class FTPConnection {
 	@Value("${ftp.username}")
 	private String username;
 	
+	@Value("${ftp.folderPath}")
+	private String folderPath;
+	
+	private FTPClient client;
+	
 	public void scannFolderOverFTP(String downloadPath) {
 
-		FTPClient client = new FTPClient();
+		client = new FTPClient();
 
 		try {
 			// Connect
 			client.connect(connectionPath);
 			client.login(username, password);
 			client.enterLocalPassiveMode();
-			client.setFileType(FTP.BINARY_FILE_TYPE);
+			client.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
+			client.setFileTransferMode(FTP.BINARY_FILE_TYPE);
 
 			// Download
 			if (client.isConnected()) {
-				FTPFile[] ftpFiles = client.listFiles();
+				FTPFile[] ftpFiles = client.listFiles(folderPath);
 				for (FTPFile fileFTP : ftpFiles) {
-					String remoteFile = fileFTP.getName();
-					File downloadFile = new File(downloadPath);
-					OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
-					boolean success = client.retrieveFile(remoteFile, outputStream);
-					if (success == true) {
-						logger.info("File: " + remoteFile + " has been downloaded.");
+					String localFile = "";
+					if(System.getProperty("os.name").contains("Win") == true) {
+						localFile = downloadPath + "\\" + fileFTP.getName(); // Windows
+					}else {
+						 localFile = downloadPath + "/" + fileFTP.getName(); // Unix
 					}
-					outputStream.close();
-					client.deleteFile(remoteFile);
+					String remoteFile = folderPath + "/" + fileFTP.getName(); 
+					OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(localFile));
+		            client.retrieveFile(remoteFile, outputStream);
+		            outputStream.flush();
+		            outputStream.close();
+					client.deleteFile(folderPath + "/" + fileFTP.getName());
 				}
+
 			}
 			client.logout();
 			client.disconnect();
