@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -31,12 +30,18 @@ public class Schedule {
 
 	@Value("${schedule.downloadCSVFiles}")
 	private boolean downloadCSVFiles;
+	
+	@Value("${schedule.enableMail}")
+	private boolean enableMail;
 
 	@Autowired
 	private ITHBAEPulsBenchRepository iTHBAEPulsBenchRepository;
 
 	@Autowired
 	private FTPConnection fTPConnection;
+	
+	@Autowired
+	private SendMail sendMail;
 
 	/**
 	 * Call this method for every minute
@@ -66,6 +71,7 @@ public class Schedule {
 		}
 
 		if (listedCSVFiles.length == 0) {
+			logger.info("No CSV files where detected. Just continue");
 			return;
 		}
 
@@ -84,7 +90,9 @@ public class Schedule {
 				
 				while (csvRow != null) {
 					ITHBAEPulsBench iTHBAEPulsBench = new ITHBAEPulsBench();
-					iTHBAEPulsBench.fillFields(csvRow);
+					boolean sendAlarm = iTHBAEPulsBench.fillFields(csvRow);
+					if(sendAlarm == true && enableMail == true)
+						sendMail.sendAlarmMail();
 					iTHBAEPulsBenchRepository.save(iTHBAEPulsBench);
 					csvRow = br.readLine(); // Read new row
 				}

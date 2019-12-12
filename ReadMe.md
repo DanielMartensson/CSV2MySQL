@@ -36,7 +36,7 @@ Step 4: Gto to `ftp.properties` and change to your password and username for the
 ftp.username = ITH
 ftp.password = ITH
 ftp.connectionPath = 192.168.0.52
-ftp.folderPath = /FTP2
+ftp.folderPath = /FTP
 ```
 
 Step5: Go to `schedule.properties` and change your scheduling configuration as well. The key `downloadCSVFiles` is used of you want to download files from FTP.
@@ -44,9 +44,26 @@ Step5: Go to `schedule.properties` and change your scheduling configuration as w
 # Global enable
 schedule.enable = true
 schedule.downloadCSVFiles = true
+schedule.enableMail = true
 
 # Schedule lists
 schedule.ITHBAEPulsBenchIXPanelPathCSVFolder = C:\\Users\\Lab4\\Documents\\FTP
 schedule.ITHBAEPulsBenchIXPanelIntervall = 5000
+```
+
+Step6: Go to 'mail.properties' and change your configurations
+```
+# Mail - Transmitter
+mail.host=smtp.gmail.com
+mail.port=587
+mail.username=yourGmail@gmail.com
+mail.password=yourPassword
+mail.properties.mail.smtp.auth=true
+mail.properties.mail.smtp.starttls.enable=true
+
+# Mail - Reciever
+mail.destination = test@test.se
+mail.subject = Epost ITH
+mail.message = Det fungerar
 ```
 

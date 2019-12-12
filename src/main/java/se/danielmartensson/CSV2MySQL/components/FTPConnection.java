@@ -1,11 +1,10 @@
 package se.danielmartensson.CSV2MySQL.components;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 
 @Component
@@ -70,6 +68,8 @@ public class FTPConnection {
 			}
 			client.logout();
 			client.disconnect();
+		} catch (ConnectException e) {
+			logger.info("Connection time out - Moving forward...");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
