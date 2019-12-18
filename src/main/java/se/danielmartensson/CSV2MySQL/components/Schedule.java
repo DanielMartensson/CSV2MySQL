@@ -104,6 +104,7 @@ public class Schedule {
 			}
 		}
 		logger.info("Done");
+		sendMail.setSendMailDate(""); // Reset for each CSV Batch
 
 	}
 
