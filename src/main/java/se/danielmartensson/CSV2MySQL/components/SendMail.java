@@ -57,7 +57,15 @@ public class SendMail {
 		simpleMailMessage.setTo(destination);
 		simpleMailMessage.setSubject(subject);
 		simpleMailMessage.setText(message);
-        emailSender.send(simpleMailMessage);
+                emailSender.send(simpleMailMessage);
 		
+	}
+	
+	/**
+	 * This is used to reset the send date if we want a new error message by mail for every CSV batch
+	 * @param sendMailDate
+	 */
+	public void setSendMailDate(String sendMailDate) {
+		this.sendMailDate = sendMailDate;
 	}
 }
