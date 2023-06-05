@@ -9,8 +9,8 @@ This tool is using the awesome Spring Framework.
 
 ## How to use
 
-Step 1: Install at least OpenJDK 8 from AdoptOpenJDK
-Step 2: Install MySQL or MariaDB
+Step 1: Install at least OpenJDK 8 from AdoptOpenJDK <br>
+Step 2: Install MySQL or MariaDB <br>
 Step 3: Go to `application.properties` and change to your database configuration and username
 
 ```
